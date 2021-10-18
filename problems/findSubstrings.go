@@ -1,56 +1,85 @@
 package problems
 
-import "sort"
+type trie struct {
+	children map[byte]*trie
+	stop     bool
+}
 
-func findSubstrings(words []string, parts []string) []string {
+func newTrie() *trie {
+	return &trie{
+		children: map[byte]*trie{},
+		stop:     false,
+	}
+}
 
-	checks := map[int]map[byte][]string{}
+func (t *trie) add(word string) {
 
-	for _, p := range parts {
-		l := len(p)
-		key := byte(p[0])
-		if _, ok := checks[l]; !ok {
-			checks[l] = map[byte][]string{}
+	if len(word) > 0 {
+
+		head := word[0]
+
+		if _, ok := t.children[head]; !ok {
+			t.children[head] = newTrie()
 		}
-		checks[l][key] = append(checks[l][key], p)
+		next := t.children[head]
+
+		tail := word[1:]
+		next.add(tail)
+
+	} else {
+
+		t.stop = true
+
+	}
+}
+
+func (t *trie) search(word string) (int, bool) {
+
+	if t == nil {
+		return 0, false
 	}
 
-	lensToCheck := []int{}
-	for l := range checks {
-		lensToCheck = append(lensToCheck, l)
-	}
-	sort.Sort(sort.Reverse(sort.IntSlice(lensToCheck)))
-
-	answer := []string{}
-
-	for _, w := range words {
-
-	lengths:
-		for _, l := range lensToCheck {
-			for pos := 0; pos+l <= len(w); pos++ {
-				tail := w[pos:]
-				key := tail[0]
-				for _, p := range checks[l][key] {
-					newTail, change := searchWord(tail, p)
-					if change {
-						w = w[:pos] + newTail
-						break lengths
-					}
-				}
-			}
-		}
-		answer = append(answer, w)
+	if len(word) == 0 {
+		return 0, t.stop
 	}
 
-	return answer
+	head := word[0]
+	tail := word[1:]
+
+	next := t.children[head]
+	tailLen, found := next.search(tail)
+
+	if found {
+		return tailLen + 1, found
+	} else {
+		return 0, t.stop
+	}
 
 }
 
-func searchWord(word, part string) (string, bool) {
-	l := len(part)
-	if word[:l] == part {
-		return "[" + part + "]" + word[l:], true
-	} else {
-		return word, false
+func findSubstrings(words []string, parts []string) []string {
+
+	checks := newTrie()
+
+	for _, p := range parts {
+		checks.add(p)
 	}
+
+	for wIdx, w := range words {
+		maxLen, maxIdx := 0, 0
+		for i := 0; i < len(w); i++ {
+			l, _ := checks.search(w[i:])
+			if l > maxLen {
+				maxLen, maxIdx = l, i
+			}
+		}
+		if maxLen > 0 {
+			before := w[:maxIdx]
+			found := w[maxIdx : maxIdx+maxLen]
+			after := w[maxIdx+maxLen:]
+			words[wIdx] = before + "[" + found + "]" + after
+		}
+	}
+
+	return words
 }
