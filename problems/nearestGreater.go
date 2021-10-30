@@ -1,10 +1,5 @@
 package problems
 
-type priorNode struct {
-	index int
-	value int
-}
-
 func nearestGreater(a []int) []int {
 
 	var stack []priorNode

@@ -1,10 +1,5 @@
 package problems
 
-type priorNode struct {
-	index int
-	value int
-}
-
 func nextLarger(a []int) []int {
 
 	// make a slice for the answer since we know the length
