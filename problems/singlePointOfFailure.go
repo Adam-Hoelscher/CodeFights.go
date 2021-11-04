@@ -1,11 +1,11 @@
 package problems
 
-type path struct {
+type spofPath struct {
 	steps []int
 	times map[int]int
 }
 
-func (p path) extend(loc int) path {
+func (p spofPath) extend(loc int) spofPath {
 
 	newTimes := map[int]int{}
 	for k, v := range p.times {
@@ -21,25 +21,25 @@ func (p path) extend(loc int) path {
 	copy(newSteps[:l], p.steps)
 	newSteps[l] = loc
 
-	return path{steps: newSteps, times: newTimes}
+	return spofPath{steps: newSteps, times: newTimes}
 
 }
 
-func (p path) findTime(loc int) int {
+func (p spofPath) findTime(loc int) int {
 	return p.times[loc]
 }
 
-func (p path) getTail(time int) []int {
+func (p spofPath) getTail(time int) []int {
 	l := len(p.steps)
 	return p.steps[time:l]
 }
 
-func (p path) getPosition() int {
+func (p spofPath) getPosition() int {
 	l := len(p.steps)
 	return p.steps[l-1]
 }
 
-func (p path) getPrior() *int {
+func (p spofPath) getPrior() *int {
 	l := len(p.steps)
 	if l > 1 {
 		return &p.steps[l-2]
@@ -48,15 +48,15 @@ func (p path) getPrior() *int {
 	}
 }
 
-func (p path) hasCycle() bool {
+func (p spofPath) hasCycle() bool {
 	l := len(p.steps)
 	tail := p.steps[l-1]
 	_, ok := p.times[tail]
 	return ok
 }
 
-func newPath() path {
-	return path{steps: []int{}, times: map[int]int{}}
+func newPath() spofPath {
+	return spofPath{steps: []int{}, times: map[int]int{}}
 }
 
 func SinglePointOfFailure(connections [][]int) int {
@@ -69,7 +69,7 @@ func SinglePointOfFailure(connections [][]int) int {
 
 	// build a queue starting at position 0
 	firstNode := newPath().extend(0)
-	q := []path{firstNode}
+	q := []spofPath{firstNode}
 
 	// bfs
 	for len(q) > 0 {
@@ -78,9 +78,9 @@ func SinglePointOfFailure(connections [][]int) int {
 		q = q[1:]
 
 		position := at.getPosition()
-        
+
 		// if we just made a cycle or if we already know this isn't spof
-        // mark everything in the cycle as not spof
+		// mark everything in the cycle as not spof
 		if at.hasCycle() || !spof[position] {
 			time := at.findTime(position)
 			for _, p := range at.getTail(time) {
@@ -107,7 +107,7 @@ func SinglePointOfFailure(connections [][]int) int {
 		}
 	}
 
-    // make sure 0 isn't marked as spof, because it doesn't represent an edge
+	// make sure 0 isn't marked as spof, because it doesn't represent an edge
 	delete(spof, 0)
 	return len(spof)
 }

@@ -1,6 +1,6 @@
 package problems
 
-type path struct {
+type diameterPath struct {
 	location int
 	steps    int
 }
@@ -16,9 +16,9 @@ func treeDiameter(n int, tree [][]int) int {
 		graph[b] = append(graph[b], a)
 	}
 
-	q := []path{{0, 0}}
+	q := []diameterPath{{0, 0}}
 	seen := map[int]bool{}
-	var at path
+	var at diameterPath
 
 	// find the farthest node from 0
 	for len(q) > 0 {
@@ -36,11 +36,11 @@ func treeDiameter(n int, tree [][]int) int {
 
 			nextLocation := dst
 			nextSteps := at.steps + 1
-			q = append(q, path{nextLocation, nextSteps})
+			q = append(q, diameterPath{nextLocation, nextSteps})
 		}
 	}
 
-	q = []path{{at.location, 0}}
+	q = []diameterPath{{at.location, 0}}
 	seen = map[int]bool{}
 
 	// find the farthest node from where we were
@@ -62,7 +62,7 @@ func treeDiameter(n int, tree [][]int) int {
 
 			nextLocation := dst
 			nextSteps := at.steps + 1
-			q = append(q, path{nextLocation, nextSteps})
+			q = append(q, diameterPath{nextLocation, nextSteps})
 		}
 	}
 
