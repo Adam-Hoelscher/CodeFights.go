@@ -1,3 +1,5 @@
+package problems
+
 import "sort"
 
 func mostFrequentSum(t *Tree) []int {

@@ -1,3 +1,5 @@
+package problems
+
 func currencyArbitrage(exchange [][]float64) bool {
 
 	l := len(exchange)
