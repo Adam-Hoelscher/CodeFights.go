@@ -1,6 +1,8 @@
+package problems
+
 import "sort"
 
-type point struct {
+type bogglePoint struct {
 	X int
 	Y int
 }
@@ -8,22 +10,22 @@ type point struct {
 func solution(board [][]string, words []string) []string {
 
 	// make a map of each letter to the locations where it can be found
-	locations := map[string][]point{}
+	locations := map[string][]bogglePoint{}
 	for rowNum, row := range board {
 		for colNum, letter := range row {
-			p := point{rowNum, colNum}
+			p := bogglePoint{rowNum, colNum}
 			locations[letter] = append(locations[letter], p)
 		}
 	}
 
 	// define helper function that returns a map of the 8 neighbors of a point
-	getNeighbors := func(p point) map[point]bool {
-		ans := map[point]bool{}
+	getNeighbors := func(p bogglePoint) map[bogglePoint]bool {
+		ans := map[bogglePoint]bool{}
 		steps := [3]int{-1, 0, 1}
 		for _, dx := range steps {
 			for _, dy := range steps {
 				if !(dx == 0 && dy == 0) {
-					ans[point{p.X + dx, p.Y + dy}] = true
+					ans[bogglePoint{p.X + dx, p.Y + dy}] = true
 				}
 			}
 		}
@@ -31,8 +33,11 @@ func solution(board [][]string, words []string) []string {
 	}
 
 	// define recursive function to search for a single word
-	var checkOne func(string, map[point]bool, *point) bool
-	checkOne = func(word string, used map[point]bool, last *point) bool {
+	var checkOne func(string, map[bogglePoint]bool, *bogglePoint) bool
+	checkOne = func(
+		word string,
+		used map[bogglePoint]bool,
+		last *bogglePoint) bool {
 
 		// if we're searching for an empty string, we're guaranteed to find it
 		if len(word) == 0 {
@@ -43,7 +48,7 @@ func solution(board [][]string, words []string) []string {
 		first, rest := word[:1], word[1:]
 
 		// find the neighbors of the last point
-		var neighbors map[point]bool
+		var neighbors map[bogglePoint]bool
 		// if last is nil then we just started and can use any letter
 		if last != nil {
 			neighbors = getNeighbors(*last)
@@ -77,7 +82,7 @@ func solution(board [][]string, words []string) []string {
 	ans := []string{}
 	// for each word check if we can find it and add it to the answer if we can
 	for _, w := range words {
-		if checkOne(w, map[point]bool{}, nil) {
+		if checkOne(w, map[bogglePoint]bool{}, nil) {
 			ans = append(ans, w)
 		}
 	}

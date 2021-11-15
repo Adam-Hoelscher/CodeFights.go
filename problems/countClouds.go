@@ -2,7 +2,7 @@ package problems
 
 import "fmt"
 
-type point struct {
+type cloudPoint struct {
 	x int
 	y int
 }
@@ -10,10 +10,10 @@ type point struct {
 func countClouds(skyMap [][]string) int {
 
 	clouds := 0
-	seen := map[point]bool{}
+	seen := map[cloudPoint]bool{}
 	for x := 0; x < len(skyMap); x++ {
 		for y := 0; y < len(skyMap[x]); y++ {
-			p := point{x, y}
+			p := cloudPoint{x, y}
 			if search(p, skyMap, seen) {
 				clouds++
 				fmt.Println()
@@ -23,7 +23,7 @@ func countClouds(skyMap [][]string) int {
 	return clouds
 }
 
-func search(p point, skyMap [][]string, seen map[point]bool) bool {
+func search(p cloudPoint, skyMap [][]string, seen map[cloudPoint]bool) bool {
 	h := len(skyMap)
 	w := len(skyMap[0])
 	x := p.x
@@ -37,11 +37,11 @@ func search(p point, skyMap [][]string, seen map[point]bool) bool {
 	} else {
 		seen[p] = true
 		for dx := -1; dx <= 1; dx++ {
-			nextP := point{x + dx, y}
+			nextP := cloudPoint{x + dx, y}
 			search(nextP, skyMap, seen)
 		}
 		for dy := -1; dy <= 1; dy++ {
-			nextP := point{x, y + dy}
+			nextP := cloudPoint{x, y + dy}
 			search(nextP, skyMap, seen)
 		}
 		return skyMap[x][y] == "1"
