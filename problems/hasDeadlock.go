@@ -1,33 +1,40 @@
 package problems
 
+import "container/list"
+
 // basically, we have a directed graph and we're looking for cycles
 func hasDeadlock(connections [][]int) bool {
 
-	// for each place we can start
-	for src, q := range connections {
+	// var search func(int, map[int]bool, map[int]bool) bool
+	// search = func(src int, used, done map[int]bool) bool {
+	// }
 
-		// keep track of where we've bee
+	for src := range connections {
+
+		q := list.New()
+		q.PushBack(src)
+
 		seen := map[int]bool{}
 
-		// while we have a queue
-		for len(q) > 0 {
+		for q.Front() != nil {
 
-			// pull from front of queue
-			at := q[0]
-			q = q[1:]
+			at := q.Remove(q.Front()).(int)
 
-			// if we're back where we started, we found a cycle
-			if at == src {
+			if at == src && seen[at] {
 				return true
+			}
 
-				// if we've not expanded this node, do so
-			} else if !seen[at] {
-				seen[at] = true
-				q = append(q, connections[at]...)
+			if seen[at] {
+				continue
+			}
+
+			seen[at] = true
+			for _, dst := range connections[at] {
+				q.PushBack(dst)
 			}
 		}
+
 	}
 
-	// if we didn't find a cycle then there aren't any
 	return false
 }
